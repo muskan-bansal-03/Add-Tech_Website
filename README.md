@@ -62,11 +62,11 @@ A complete web application for students to test their knowledge across multiple 
 - Modern web browser
 
 ### Step 1: Clone and Setup
-```bash
-# Clone the project
+bash
+Clone the project
 git clone <repository-url>
 cd edtech-quiz-app
+ Install backend dependencies
+cd backend<img width="1920" height="1200" alt="Screenshot 2025-12-20 000031" src="https://github.com/user-attachments/assets/42038303-31c6-4eaa-a11e-c4e2f3ffee13" />
 
-# Install backend dependencies
-cd backend
 npm install
