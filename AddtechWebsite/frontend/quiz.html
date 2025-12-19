@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - EdTech Portal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Basic improved design */
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .quiz-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 15px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: #4caf50;
+            transition: width 0.3s;
+        }
+
+        .quiz-box h3 {
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .options-list li {
+            margin-bottom: 10px;
+        }
+
+        .options-list button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            background: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .options-list button:hover:not(:disabled) {
+            background: #4caf50;
+            color: #fff;
+        }
+
+        .options-list button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .explanation-box {
+            margin-top: 20px;
+            background: #f9f9f9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .explanation-img {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .btn-next,
+        .btn,
+        .btn-secondary,
+        .btn-logout,
+        .btn-audio {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-next {
+            background: #4caf50;
+            color: #fff;
+        }
+
+        .btn-next:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #2196f3;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #1976d2;
+        }
+
+        .btn-logout {
+            background: #f44336;
+            color: #fff;
+        }
+
+        .btn-logout:hover {
+            background: #d32f2f;
+        }
+
+        .btn-audio {
+            background: #ff9800;
+            color: #fff;
+        }
+
+        .btn-audio:hover {
+            background: #fb8c00;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px 25px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+        }
+
+        .modal-content ul {
+            padding-left: 20px;
+        }
+
+        .modal-content ul li {
+            margin-bottom: 10px;
+        }
+
+        .subject-tracker {
+            margin-top: 5px;
+            font-style: italic;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="quiz-header">
+            <h1><i class="fas fa-brain"></i> Multi-Subject Quiz Challenge</h1>
+            <p class="quiz-info">Test your knowledge across 4 subjects with 10 questions</p>
+
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span class="progress-text">
+                        Question: <strong id="currentQuestion">1</strong>/10
+                    </span>
+                    <span class="score-preview">
+                        Score: <strong id="currentScore">0</strong>/10
+                    </span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="subject-tracker">
+                    <span id="currentSubject">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-box" id="quizBox">
+            <!-- Questions loaded by JavaScript -->
+        </div>
+
+        <div class="explanation-box" id="explanationBox" style="display: none;">
+            <div class="explanation-header" id="explanationHeader">
+                <!-- Header set by JavaScript -->
+            </div>
+
+            <div class="explanation-content">
+                <div class="explanation-text">
+                    <p id="explanationText"></p>
+                </div>
+
+                <div class="visual-explanation">
+                    <h4><i class="fas fa-image"></i> Visual Explanation:</h4>
+                    <img id="explanationImage" src="" alt="Explanation Image" class="explanation-img">
+                </div>
+
+                <div class="audio-explanation">
+                    <h4><i class="fas fa-volume-up"></i> Audio Explanation:</h4>
+                    <div class="audio-controls">
+                        <audio id="explanationAudio" controls>
+                            Your browser does not support audio
+                        </audio>
+                        <button onclick="playAudio()" class="btn-audio">
+                            <i class="fas fa-play"></i> Play Audio
+                        </button>
+                    </div>
+                </div>
+
+                <div class="explanation-actions">
+                    <button onclick="nextQuestion()" class="btn-next">
+                        <i class="fas fa-arrow-right"></i> Next Question
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation" style="margin-top:20px; display:flex; justify-content: space-between;">
+            <button onclick="showInstructions()" class="btn-secondary">
+                <i class="fas fa-question-circle"></i> Instructions
+            </button>
+            <button onclick="logout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div class="modal" id="instructionsModal" style="display: none;">
+        <div class="modal-content">
+            <h3><i class="fas fa-info-circle"></i> Quiz Instructions</h3>
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Total 10 questions from 4 subjects</li>
+                <li><i class="fas fa-check-circle"></i> Each question has 4 options</li>
+                <li><i class="fas fa-check-circle"></i> Select one answer and click Submit</li>
+                <li><i class="fas fa-check-circle"></i> Wrong answers show detailed explanations</li>
+                <li><i class="fas fa-check-circle"></i> Correct answers move to next question</li>
+                <li><i class="fas fa-check-circle"></i> Get AI-powered feedback at the end</li>
+            </ul>
+            <button onclick="hideInstructions()" class="btn btn-next">Start Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        async function fetchQuestions() {
+            try {
+                const response = await fetch("http://localhost:3000/api/questions");
+                if (!response.ok) throw new Error("Failed to fetch questions from API");
+
+                const data = await response.json();
+                questions = data.questions || [];
+
+                if (questions.length === 0) {
+                    alert("No questions available at the moment.");
+                    return;
+                }
+
+                showInstructions();
+            } catch (error) {
+                console.error(error);
+                alert("Error fetching questions. Please try again later.");
+            }
+        }
+
+        function loadQuestion() {
+            const quizBox = document.getElementById("quizBox");
+            const q = questions[currentQuestionIndex];
+
+            quizBox.innerHTML = `
+                <h3>${q.subject.toUpperCase()}: ${q.question}</h3>
+                <ul class="options-list">
+                    ${q.options.map((opt, idx) => `<li><button onclick="submitAnswer(${idx})">${opt}</button></li>`).join('')}
+                </ul>
+            `;
+
+            document.getElementById("currentSubject").innerText = q.subject;
+            document.getElementById("currentQuestion").innerText = currentQuestionIndex + 1;
+
+            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById("progressFill").style.width = progressPercent + "%";
+
+            document.getElementById("explanationBox").style.display = "none";
+        }
+
+        function submitAnswer(selectedIndex) {
+            const q = questions[currentQuestionIndex];
+            const selectedOption = q.options[selectedIndex];
+
+            const isCorrect = selectedOption === q.correctAnswer;
+
+            if (isCorrect) {
+                // Correct answer → increment score
+                score++;
+                document.getElementById("currentScore").innerText = score;
+
+                // Move to next question automatically after a short delay
+                setTimeout(nextQuestion, 500); // optional 0.5s delay to show green highlight
+            } else {
+                // Wrong answer → show explanation
+                document.getElementById("explanationText").innerText = q.explanation || "No explanation available.";
+                document.getElementById("explanationImage").src = q.image || "";
+                document.getElementById("explanationAudio").src = ""; // optional TTS
+                document.getElementById("explanationBox").style.display = "block";
+            }
+
+            // Disable all buttons to prevent multiple clicks
+            document.querySelectorAll(".options-list button").forEach(btn => btn.disabled = true);
+
+            // Optional: visually mark correct / wrong buttons
+            const buttons = document.querySelectorAll(".options-list button");
+            buttons[selectedIndex].style.background = isCorrect ? "#4caf50" : "#f44336";
+
+            if (!isCorrect) {
+                // Highlight the correct answer in green
+                const correctIndex = q.options.findIndex(opt => opt === q.correctAnswer);
+                buttons[correctIndex].style.background = "#4caf50";
+            }
+        }
+
+        async function nextQuestion() {
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                // Quiz finished → submit result to DB
+                const studentEmail = localStorage.getItem("studentEmail") || "anonymous"; // optional
+                console.log('studentEmail: ', studentEmail);
+
+                try {
+                    const response = await fetch("http://localhost:3000/api/reports", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            studentEmail: studentEmail,
+                            score: score,
+                            totalQuestions: questions.length,
+                            answers: questions.map(q => ({
+                                question: q.question,
+                                correctAnswer: q.correctAnswer,
+                                selectedAnswer: q.selectedAnswer || null
+                            }))
+                        })
+                    });
+
+                    if (!response.ok) throw new Error("Failed to submit quiz result");
+
+                    const result = await response.json();
+                    console.log("Quiz result submitted:", result);
+                    localStorage.setItem("latestReport", JSON.stringify(result));
+                    // Redirect to report page
+                    window.location.href = "report.html";
+                } catch (error) {
+                    console.error("Error submitting result:", error);
+                    alert("Error submitting quiz result. Please try again.");
+                }
+            }
+        }
+
+
+        function playAudio() {
+            const audio = document.getElementById("explanationAudio");
+            audio.play();
+        }
+
+        function showInstructions() {
+            document.getElementById("instructionsModal").style.display = "flex";
+        }
+
+        function hideInstructions() {
+            document.getElementById("instructionsModal").style.display = "none";
+            loadQuestion();
+        }
+
+        function logout() {
+            // localStorage.removeItem("studentEmail");
+            // window.location.href = "index.html";
+        }
+
+        window.onload = fetchQuestions;
+    </script>
+</body>
+
+</html>
